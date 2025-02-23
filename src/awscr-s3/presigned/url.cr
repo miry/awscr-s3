@@ -32,17 +32,12 @@ module Awscr
 
           String.build do |str|
             str << "#{@scheme}://"
-            {% if compare_versions(Crystal::VERSION, "0.36.0") < 0 %}
-              str << request.host
-            {% else %}
-              str << request.hostname
-            {% end %}
+            str << request.headers["Host"]
 
             if @options.include_port
               if header = request.headers["Host"]?
                 if header.includes?(":")
                   host, _, port = header.rpartition(":")
-                  puts host, port
                   unless port == ""
                     str << ":"
                     str << port
@@ -66,9 +61,17 @@ module Awscr
 
           body = @options.signer_version == :v4 ? "UNSIGNED-PAYLOAD" : nil
 
+          key = @options.object.starts_with?("/") ? @options.object : "/#{@options.object}"
+
+          path = if @options.force_path_style
+                   "/#{@options.bucket}#{key}"
+                 else
+                   key
+                 end
+
           request = HTTP::Request.new(
             method,
-            "/#{@options.bucket}#{@options.object}",
+            path,
             headers,
             body
           )
@@ -84,15 +87,16 @@ module Awscr
 
         # :nodoc:
         private def host
+          host_name = base_host
+          @options.force_path_style ? host_name : "#{@options.bucket}.#{host_name}"
+        end
+
+        def base_host
           if host_name = @options.host_name
-            if host_name.includes?("http")
-              raise RuntimeError.new("host_name must not contain http(s)")
-            end
-            host_name
-          else
-            return default_host if @region == standard_us_region
-            "s3-#{@region}.amazonaws.com"
+            return host_name
           end
+          return default_host if @region == standard_us_region
+          "s3-#{@region}.amazonaws.com"
         end
 
         # :nodoc:

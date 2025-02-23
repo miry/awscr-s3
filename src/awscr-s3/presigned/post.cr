@@ -85,7 +85,8 @@ module Awscr
             version: @signer,
             region: @region,
             aws_access_key: @aws_access_key,
-            aws_secret_key: @aws_secret_key
+            aws_secret_key: @aws_secret_key,
+            aws_session_key: nil
           )
         end
       end

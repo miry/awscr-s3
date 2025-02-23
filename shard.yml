@@ -13,8 +13,9 @@ license: MIT
 
 dependencies:
   awscr-signer:
-    github: taylorfinnell/awscr-signer
-    version: ~> 0.8.0
+    github: miry/awscr-signer
+    branch: master
+    # path: ~/src/oos/awscr-signer/
 
 development_dependencies:
   timecop:
@@ -25,4 +26,3 @@ development_dependencies:
     branch: master
   ameba:
     github: crystal-ameba/ameba
-    version: ~> 0.13.0
