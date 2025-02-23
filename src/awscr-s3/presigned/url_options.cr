@@ -5,6 +5,9 @@ module Awscr
         # Options for generating a `Presigned::Url`
         struct Options
           # The bucket for the presigned url
+          getter endpoint : String?
+
+          # The bucket for the presigned url
           getter bucket
 
           # The object key, it must start with '/'
@@ -34,6 +37,9 @@ module Awscr
           # The scheme attached to the given host. ie: <scheme>://<host_name>. Default: https
           getter scheme
 
+          # Use path format for bucket specification <scheme>://<host_name>/<bucket>/<key> <scheme>://<bucket>.<host_name>/<key>
+          getter force_path_style : Bool = false
+
           @expires : Int32
           @additional_options : Hash(String, String)
           @bucket : String
@@ -44,9 +50,30 @@ module Awscr
           @host_name : String?
           @include_port : Bool
 
-          def initialize(@aws_access_key, @aws_secret_key, @region,
-                         @object, @bucket, @expires = 86_400, @host_name = nil,
-                         @additional_options = {} of String => String, @signer = :v4, @include_port = false, @scheme = "https")
+          def initialize(@aws_access_key,
+                         @aws_secret_key,
+                         @region,
+                         @object, @bucket,
+                         endpoint = nil,
+                         @expires = 86_400,
+                         @host_name = nil,
+                         @additional_options = {} of String => String,
+                         @signer = :v4,
+                         @include_port = false,
+                         @force_path_style = false,
+                         @scheme = "https")
+            if endpoint
+              uri = URI.parse(endpoint)
+              scheme = uri.scheme
+              @scheme = scheme if scheme
+              host_name = uri.host
+              if host_name
+                if uri.port && uri.port != URI.default_port(@scheme)
+                  host_name += ":#{uri.port}"
+                end
+                @host_name = host_name
+              end
+            end
           end
 
           def signer_version
@@ -57,6 +84,7 @@ module Awscr
             SignerFactory.get(
               version: @signer,
               region: @region,
+              endpoint: @endpoint,
               aws_access_key: @aws_access_key,
               aws_secret_key: @aws_secret_key
             )

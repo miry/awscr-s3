@@ -4,8 +4,11 @@ module Awscr
     # requested, and configures it with the region, key and secret.
     class SignerFactory
       # Fetch and configure a signer based on a version algorithm
-      def self.get(region : String, aws_access_key : String,
-                   aws_secret_key : String, version : Symbol,
+      def self.get(region : String,
+                   aws_access_key : String,
+                   aws_secret_key : String,
+                   version : Symbol,
+                   endpoint : String? = nil,
                    aws_session_key : String? = nil)
         case version
         when :v4
