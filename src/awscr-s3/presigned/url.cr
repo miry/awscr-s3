@@ -1,3 +1,4 @@
+require "../log"
 require "./url_options"
 
 module Awscr
@@ -52,6 +53,7 @@ module Awscr
 
         # :nodoc:
         private def presign_request(request)
+          Log.trace { host = request.headers["Host"]; "Presign request with #{request.method} #{host}#{request.path}?#{request.query}" }
           @options.signer.presign(request)
         end
 
