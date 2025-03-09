@@ -38,7 +38,7 @@ module Awscr
           getter scheme
 
           # Use path format for bucket specification <scheme>://<host_name>/<bucket>/<key> <scheme>://<bucket>.<host_name>/<key>
-          getter force_path_style : Bool = false
+          getter? force_path_style : Bool = false
 
           @expires : Int32
           @additional_options : Hash(String, String)

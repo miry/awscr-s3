@@ -38,7 +38,7 @@ module Awscr
             if @options.include_port
               if header = request.headers["Host"]?
                 if header.includes?(":")
-                  host, _, port = header.rpartition(":")
+                  _, _, port = header.rpartition(":")
                   unless port == ""
                     str << ":"
                     str << port
@@ -65,7 +65,7 @@ module Awscr
 
           key = @options.object.starts_with?("/") ? @options.object : "/#{@options.object}"
 
-          path = if @options.force_path_style
+          path = if @options.force_path_style?
                    "/#{@options.bucket}#{key}"
                  else
                    key
@@ -90,7 +90,7 @@ module Awscr
         # :nodoc:
         private def host
           host_name = base_host
-          @options.force_path_style ? host_name : "#{@options.bucket}.#{host_name}"
+          @options.force_path_style? ? host_name : "#{@options.bucket}.#{host_name}"
         end
 
         def base_host
