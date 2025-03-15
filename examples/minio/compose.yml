@@ -1,16 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
 
 services:
-  # localstack:
-  #   container_name: localstack
-  #   image: localstack/localstack
-  #   ports:
-  #     - "127.0.0.1:4566:4566" # LocalStack Gateway
-  #     - "127.0.0.1:4510-4559:4510-4559" # external services port range
-  #   environment:
-  #     - PERSISTENCE=false
-  #     - SERVICES=s3
-
   minio:
     image: quay.io/minio/minio
     ports:
@@ -20,3 +10,16 @@ services:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
     command: server /data --console-address ":9001"
+
+  createbuckets:
+    image: quay.io/minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -x -c "
+      sleep 5;
+      /usr/bin/mc alias set myminio http://minio:9000 admin password;
+      /usr/bin/mc mb myminio/storage;
+
+      exit 0;
+      "
