@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.9.0]
+
 ### Added
 
 - Add option to include port in presigned url. (#106, thanks @taylorfinnell)
@@ -35,5 +37,6 @@
 
 - Adds `Awscr::S3::Client#copy_object(bucket, source, destination, headers)`. (#100, thanks @caspiano)
 
-[Unreleased]: https://github.com/taylorfinnell/awscr-s3/compare/v0.8.3...HEAD
+[Unreleased]: https://github.com/taylorfinnell/awscr-s3/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/taylorfinnell/awscr-s3/compare/v0.8.3...v0.9.0
 [0.8.3]: https://github.com/taylorfinnell/awscr-s3/compare/v0.8.2...v0.8.3
